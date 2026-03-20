@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>If You Were Me</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#080a0c;color:#e8e2d8;font-family:Georgia,'Times New Roman',serif;overflow-x:hidden}
+
+  /* ── LOADING SCREEN ────────────────────────────────────────────────────────── */
+  #loader{
+    position:fixed;inset:0;z-index:9999;background:#080a0c;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transition:opacity 1.2s ease;
+  }
+  #loader.done{opacity:0;pointer-events:none}
+  #loader-title{
+    font-size:clamp(2rem,6vw,4.5rem);font-weight:400;color:#c8c4ba;
+    text-shadow:0 0 40px rgba(200,180,140,0.25),0 0 80px rgba(200,180,140,0.08);
+    letter-spacing:-0.01em;
+  }
+  #loader-title span{
+    opacity:0;display:inline-block;
+    transition:opacity 0.6s ease;
+  }
+  #loader-line{
+    width:0;height:1px;background:#333;margin-top:3rem;
+    transition:width 1.8s ease;
+  }
+  #loader-line.draw{width:min(400px,60vw)}
+
+  /* ── CANVAS LAYERS ─────────────────────────────────────────────────────────── */
+  #mist-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+  #grain-canvas{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0.55;mix-blend-mode:overlay}
+
+  nav,section,.stats,.ig-section,footer,.hero{position:relative;z-index:2}
+
+  /* ── NAV ────────────────────────────────────────────────────────────────────── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;
+  }
+  .nav-title{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:#666}
+  .nav-links{display:flex;gap:2.5rem}
+  .nav-links a{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;text-decoration:none;transition:color 0.4s,text-shadow 0.4s}
+  .nav-links a:hover{color:#ddd;text-shadow:0 0 16px rgba(220,215,200,0.4)}
+
+  /* ── GLOW FLICKER ──────────────────────────────────────────────────────────── */
+  @keyframes glowFlicker{
+    0%   {text-shadow:0 0 30px rgba(200,180,140,0.2), 0 0 60px rgba(200,180,140,0.06)}
+    8%   {text-shadow:0 0 22px rgba(200,180,140,0.12),0 0 40px rgba(200,180,140,0.03)}
+    12%  {text-shadow:0 0 35px rgba(200,180,140,0.25),0 0 70px rgba(200,180,140,0.08)}
+    20%  {text-shadow:0 0 25px rgba(200,180,140,0.15),0 0 50px rgba(200,180,140,0.04)}
+    35%  {text-shadow:0 0 32px rgba(200,180,140,0.22),0 0 65px rgba(200,180,140,0.07)}
+    45%  {text-shadow:0 0 20px rgba(200,180,140,0.1), 0 0 38px rgba(200,180,140,0.02)}
+    60%  {text-shadow:0 0 28px rgba(200,180,140,0.18),0 0 55px rgba(200,180,140,0.05)}
+    75%  {text-shadow:0 0 24px rgba(200,180,140,0.13),0 0 45px rgba(200,180,140,0.03)}
+    80%  {text-shadow:0 0 33px rgba(200,180,140,0.22),0 0 62px rgba(200,180,140,0.07)}
+    100% {text-shadow:0 0 30px rgba(200,180,140,0.2), 0 0 60px rgba(200,180,140,0.06)}
+  }
+
+  @keyframes microShake{
+    0%   {transform:translate(0,0)}
+    15%  {transform:translate(-0.2px, 0.1px)}
+    30%  {transform:translate(0.15px,-0.2px)}
+    50%  {transform:translate(-0.1px, 0.15px)}
+    70%  {transform:translate(0.2px,-0.1px)}
+    85%  {transform:translate(-0.15px,0.1px)}
+    100% {transform:translate(0,0)}
+  }
+
+  .glow-text{
+    animation:glowFlicker 5s ease-in-out infinite;
+  }
+
+  /* ── HERO TITLE FLICKER — only this element is interactive ─────────────────── */
+  .hero-title{
+    font-weight:400;
+    margin-bottom:3rem;
+    color:#c8c4ba;
+    font-size:clamp(2.8rem,8vw,6rem);
+    line-height:1.15;
+    letter-spacing:-0.015em;
+    animation:microShake 10s linear infinite, glowFlicker 5s ease-in-out infinite;
+  }
+  .hero-title em{font-style:italic;color:#d5d0c6}
+
+  .hero-title .hero-letter{
+    display:inline-block;
+    transition:opacity 0.06s steps(1), text-shadow 0.06s steps(1);
+  }
+  .hero-title .hero-letter.flick{
+    animation:letterFlick 0.4s steps(1) 1;
+  }
+  @keyframes letterFlick{
+    0%  {opacity:1}
+    12% {opacity:0.3}
+    24% {opacity:0.9}
+    36% {opacity:0.15}
+    48% {opacity:1;  text-shadow:0 0 35px rgba(200,180,140,0.4)}
+    60% {opacity:0.5}
+    72% {opacity:1}
+    84% {opacity:0.7}
+    100%{opacity:1}
+  }
+
+  /* ── HERO ───────────────────────────────────────────────────────────────────── */
+  .hero{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+  .hero-eyebrow{font-size:0.62rem;letter-spacing:0.32em;text-transform:uppercase;color:#444;margin-bottom:5rem}
+  .hero-sub{font-size:0.85rem;color:#555;letter-spacing:0.08em;line-height:2.2;font-family:Arial,sans-serif}
+
+  /* ── SECTIONS ───────────────────────────────────────────────────────────────── */
+  section{padding:8rem 3rem;max-width:980px;margin:0 auto}
+  .section-label{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:#444;margin-bottom:2.5rem}
+
+  .video-wrap{
+    width:100%;aspect-ratio:16/9;background:#060809;
+    border:1px solid #1f2228;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
+    cursor:pointer;position:relative;overflow:hidden;
+  }
+  .play-ring{
+    width:60px;height:60px;border-radius:50%;border:1px solid #333;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color 0.4s,box-shadow 0.4s;position:relative;z-index:1;
+  }
+  .video-wrap:hover .play-ring{border-color:#666;box-shadow:0 0 30px rgba(150,140,120,0.2)}
+  .play-tri{width:0;height:0;border-style:solid;border-width:9px 0 9px 16px;border-color:transparent transparent transparent #666;margin-left:3px}
+  .play-label{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:#444;position:relative;z-index:1}
+
+  /* ── STATS ──────────────────────────────────────────────────────────────────── */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #15181e;border-bottom:1px solid #15181e;max-width:980px;margin:0 auto}
+  .stat{padding:4rem 2.5rem;border-right:1px solid #15181e;text-align:center}
+  .stat:last-child{border-right:none}
+  .stat-num{
+    font-size:clamp(2rem,4vw,3.2rem);font-weight:400;
+    color:#c8c4ba;letter-spacing:-0.03em;margin-bottom:0.6rem;
+  }
+  .stat-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#444;line-height:1.8}
+
+  /* ── ABOUT ──────────────────────────────────────────────────────────────────── */
+  .about-grid{display:grid;grid-template-columns:1fr 2fr;gap:7rem;align-items:start}
+  .about-heading{
+    font-size:clamp(1.6rem,2.8vw,2.5rem);font-weight:400;line-height:1.2;
+    margin-bottom:2.5rem;color:#c8c4ba;
+  }
+  .about-heading em{font-style:italic;color:#d5d0c6}
+  .about-body{font-size:0.88rem;color:#555;line-height:2.1;font-family:Arial,sans-serif}
+  .about-body p+p{margin-top:1.5rem}
+
+  /* ── INSTAGRAM ──────────────────────────────────────────────────────────────── */
+  .ig-section{text-align:center;padding:9rem 3rem}
+  .ig-heading{
+    font-size:clamp(1.8rem,4vw,3.5rem);font-weight:400;margin-bottom:3.5rem;line-height:1.15;
+    color:#c8c4ba;
+  }
+  .ig-heading em{font-style:italic;color:#d5d0c6}
+  .ig-btn{
+    display:inline-block;padding:0.9rem 2.5rem;border:1px solid #222;
+    font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;
+    color:#555;text-decoration:none;transition:all 0.5s;font-family:Arial,sans-serif;
+  }
+  .ig-btn:hover{color:#ccc;border-color:#444;box-shadow:0 0 25px rgba(100,95,85,0.12)}
+
+  /* ── FOOTER ─────────────────────────────────────────────────────────────────── */
+  footer{border-top:1px solid #15181e;padding:2.5rem 3rem;display:flex;justify-content:space-between;align-items:center}
+  .footer-l{font-size:0.62rem;letter-spacing:0.1em;color:#2e2e34}
+  .footer-r{font-size:0.62rem;letter-spacing:0.08em;color:#28282e;font-family:Arial,sans-serif}
+
+  /* ── FADE ANIMATION ─────────────────────────────────────────────────────────── */
+  .fade{opacity:0;transform:translateY(18px);transition:opacity 1.1s ease,transform 1.1s ease}
+  .fade.in{opacity:1;transform:none}
+
+  /* ── RESPONSIVE ─────────────────────────────────────────────────────────────── */
+  @media(max-width:700px){
+    nav{padding:1.5rem}
+    section,.ig-section{padding-left:1.5rem;padding-right:1.5rem}
+    .about-grid{grid-template-columns:1fr;gap:2.5rem}
+    .stats{grid-template-columns:1fr;border:none;border-top:1px solid #15181e}
+    .stat{border:none;border-bottom:1px solid #15181e}
+    footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── LOADING SCREEN ──────────────────────────────────────────────────────────── -->
+<div id="loader">
+  <h1 id="loader-title"></h1>
+  <div id="loader-line"></div>
+</div>
+
+<canvas id="mist-canvas"></canvas>
+<canvas id="grain-canvas"></canvas>
+
+<nav>
+  <span class="nav-title">If You Were Me</span>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#watch">Watch</a>
+    <a href="https://www.instagram.com/if_you_wereme" target="_blank">Instagram</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow fade">A LIFE project · Tallinn University · 2026</p>
+  <h1 class="hero-title fade" id="hero-title">If you were <em>me</em></h1>
+  <p class="hero-sub fade">What does it feel like to live with anxiety?</p>
+</div>
+
+<section id="watch">
+  <p class="section-label fade">The film</p>
+  <div class="video-wrap fade">
+    <div class="play-ring"><div class="play-tri"></div></div>
+    <span class="play-label">Coming soon</span>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat fade"><div class="stat-num glow-text">1 in 4</div><div class="stat-label">students experience<br>anxiety symptoms</div></div>
+  <div class="stat fade"><div class="stat-num glow-text">16 to 25</div><div class="stat-label">the age group<br>most affected</div></div>
+  <div class="stat fade"><div class="stat-num glow-text">Often<br>unseen</div><div class="stat-label">anxiety is invisible<br>to those around you</div></div>
+</div>
+
+<section id="about">
+  <div class="about-grid">
+    <div><p class="section-label">About</p></div>
+    <div>
+      <h2 class="about-heading fade glow-text">Understanding what<br>others cannot <em>see</em></h2>
+      <div class="about-body fade">
+        <p>Anxiety disorders are the most common mental health challenge among students today. Yet for those who have never experienced it, anxiety remains abstract. A word, not a feeling.</p>
+        <p><em>If You Were Me</em> is a short AI-generated film that places you inside the experience of a young person living with social anxiety. Through everyday moments, a morning alarm, a crowded hallway, a classroom, the film reveals what it feels like when anxiety is always present, even when no one around you can tell.</p>
+        <p>Created by students at Tallinn University, grounded in psychological research, and guided by expert feedback.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ig-section">
+  <p class="section-label fade">Follow</p>
+  <h2 class="ig-heading fade glow-text">See behind<br>the <em>story</em></h2>
+  <a class="ig-btn fade" href="https://www.instagram.com/if_you_wereme" target="_blank">@if_you_wereme</a>
+</div>
+
+<footer>
+  <span class="footer-l">2026 If You Were Me / Group 2, Tallinn University</span>
+  <span class="footer-r">Supervisor: Mar Canet Sola</span>
+</footer>
+
+<script>
+// ── LOADING SCREEN ────────────────────────────────────────────────────────────
+(function(){
+  const title = 'If You Were Me';
+  const el = document.getElementById('loader-title');
+  const line = document.getElementById('loader-line');
+  const loader = document.getElementById('loader');
+
+  const chars = [];
+  for(let i = 0; i < title.length; i++){
+    const span = document.createElement('span');
+    span.textContent = title[i] === ' ' ? '\u00A0' : title[i];
+    el.appendChild(span);
+    chars.push(span);
+  }
+
+  let i = 0;
+  const interval = setInterval(() => {
+    if(i < chars.length){
+      chars[i].style.opacity = '1';
+      i++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 90);
+
+  setTimeout(() => line.classList.add('draw'), 300);
+
+  setTimeout(() => {
+    loader.classList.add('done');
+    setTimeout(() => { loader.style.display = 'none'; }, 1200);
+  }, title.length * 90 + 2000);
+})();
+
+// ── HERO TITLE — per-letter flicker on mouse proximity ───────────────────────
+(function(){
+  const h1 = document.getElementById('hero-title');
+  const text = h1.textContent;
+  h1.textContent = '';
+
+  // Wrap each character in a span, preserve <em> for "me"
+  const html = 'If you were <em>me</em>';
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+
+  function wrapLetters(node, container){
+    node.childNodes.forEach(child => {
+      if(child.nodeType === 3){
+        // text node — wrap each char, preserve spaces
+        for(const ch of child.textContent){
+          const span = document.createElement('span');
+          span.className = 'hero-letter';
+          span.innerHTML = ch === ' ' ? '&nbsp;' : ch;
+          container.appendChild(span);
+        }
+      } else if(child.nodeType === 1){
+        // element node — clone and recurse
+        const clone = document.createElement(child.tagName.toLowerCase());
+        for(const attr of child.attributes) clone.setAttribute(attr.name, attr.value);
+        wrapLetters(child, clone);
+        container.appendChild(clone);
+      }
+    });
+  }
+  wrapLetters(temp, h1);
+
+  const letters = h1.querySelectorAll('.hero-letter');
+
+  document.addEventListener('mousemove', e => {
+    const rect = h1.getBoundingClientRect();
+    // check if mouse is near the title area
+    const pad = 80;
+    const inZone = e.clientX > rect.left - pad && e.clientX < rect.right + pad
+                && e.clientY > rect.top - pad && e.clientY < rect.bottom + pad;
+    if(!inZone) return;
+
+    // randomly flicker 1-2 nearby letters
+    letters.forEach(letter => {
+      const lr = letter.getBoundingClientRect();
+      const lcx = lr.left + lr.width/2;
+      const lcy = lr.top + lr.height/2;
+      const dist = Math.sqrt((e.clientX-lcx)**2 + (e.clientY-lcy)**2);
+
+      if(dist < 100 && Math.random() < 0.08 && !letter.classList.contains('flick')){
+        letter.classList.add('flick');
+        letter.addEventListener('animationend', function handler(){
+          letter.classList.remove('flick');
+          letter.removeEventListener('animationend', handler);
+        });
+      }
+    });
+  });
+})();
+
+// ── MIST ──────────────────────────────────────────────────────────────────────
+const mc = document.getElementById('mist-canvas');
+const mx = mc.getContext('2d');
+let W, H, mouse = {x: -999, y: -999};
+
+function resize(){
+  W = mc.width = window.innerWidth;
+  H = mc.height = document.body.scrollHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+window.addEventListener('scroll', () => { resize(); });
+
+window.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY + window.scrollY;
+});
+
+function noise(x, y, t){
+  return (Math.sin(x * 0.008 + t) * Math.cos(y * 0.006 + t * 0.7)
+        + Math.sin(x * 0.003 - t * 0.5) * Math.sin(y * 0.009 + t * 0.3)
+        + Math.cos(x * 0.012 + y * 0.005 - t * 0.9)) / 3;
+}
+
+// Thick fog
+const PARTICLES = 120;
+const particles = Array.from({length: PARTICLES}, () => ({
+  x: Math.random() * 2000,
+  y: Math.random() * 6000,
+  rx: 250 + Math.random() * 400,
+  ry: 120 + Math.random() * 250,
+  speed: 0.04 + Math.random() * 0.12,
+  phase: Math.random() * Math.PI * 2,
+  ox: 0, oy: 0,
+  alpha: 0.08 + Math.random() * 0.14,
+}));
+
+let t = 0;
+function drawMist(){
+  mc.width = W;
+  mc.height = H;
+
+  particles.forEach(p => {
+    const maxR = Math.max(p.rx, p.ry);
+
+    p.x += Math.sin(t * p.speed + p.phase) * 0.6;
+    p.y += Math.cos(t * p.speed * 0.7 + p.phase) * 0.35;
+
+    if(p.x < -maxR) p.x = W + maxR;
+    if(p.x > W + maxR) p.x = -maxR;
+    if(p.y < -maxR) p.y = H + maxR;
+    if(p.y > H + maxR) p.y = -maxR;
+
+    const dx = p.x - mouse.x, dy = p.y - mouse.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist < 350 && dist > 0){
+      const force = (1 - dist/350) * 5;
+      p.ox += (dx/dist) * force;
+      p.oy += (dy/dist) * force;
+    }
+    p.ox *= 0.92;
+    p.oy *= 0.92;
+
+    const px = p.x + p.ox;
+    const py = p.y + p.oy;
+
+    const n = noise(px, py, t * 0.25);
+    const alpha = p.alpha * (0.4 + 0.6 * n);
+    if(alpha <= 0) return;
+
+    mx.save();
+    mx.translate(px, py);
+    mx.scale(1, p.ry / p.rx);
+
+    const grad = mx.createRadialGradient(0, 0, 0, 0, 0, p.rx);
+    grad.addColorStop(0,   `rgba(85,82,75,${alpha})`);
+    grad.addColorStop(0.25,`rgba(65,62,58,${alpha * 0.75})`);
+    grad.addColorStop(0.5, `rgba(45,43,40,${alpha * 0.45})`);
+    grad.addColorStop(0.75,`rgba(25,24,22,${alpha * 0.15})`);
+    grad.addColorStop(1,   'rgba(15,14,13,0)');
+
+    mx.beginPath();
+    mx.arc(0, 0, p.rx, 0, Math.PI * 2);
+    mx.fillStyle = grad;
+    mx.fill();
+    mx.restore();
+  });
+
+  t += 0.007;
+  requestAnimationFrame(drawMist);
+}
+drawMist();
+
+// ── GRAIN ─────────────────────────────────────────────────────────────────────
+const gc = document.getElementById('grain-canvas');
+const gx = gc.getContext('2d');
+const GRAIN_SCALE = 2;
+
+function drawGrain(){
+  const fw = window.innerWidth || 1;
+  const fh = window.innerHeight || 1;
+  const gw = Math.ceil(fw / GRAIN_SCALE);
+  const gh = Math.ceil(fh / GRAIN_SCALE);
+  gc.width = gw;
+  gc.height = gh;
+  gc.style.width = fw + 'px';
+  gc.style.height = fh + 'px';
+  if(!gw || !gh) return;
+
+  const img = gx.createImageData(gw, gh);
+  const d = img.data;
+  for(let i = 0; i < d.length; i += 4){
+    const v = Math.random() * 110;
+    d[i] = v; d[i+1] = v; d[i+2] = v;
+    d[i+3] = Math.random() * 100 + 35;
+  }
+  gx.putImageData(img, 0, 0);
+}
+drawGrain();
+setInterval(drawGrain, 60);
+
+// ── SCROLL FADE ────────────────────────────────────────────────────────────────
+const obs = new IntersectionObserver(e => e.forEach(x => {
+  if(x.isIntersecting) x.target.classList.add('in');
+}), {threshold: 0.12});
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
