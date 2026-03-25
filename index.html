@@ -149,6 +149,54 @@
   .about-body{font-size:0.88rem;color:#555;line-height:2.1;font-family:Arial,sans-serif}
   .about-body p+p{margin-top:1.5rem}
 
+  /* ── GAME SECTION ───────────────────────────────────────────────────────────── */
+  .game-promo{text-align:center}
+  .game-promo-heading{
+    font-size:clamp(1.6rem,2.8vw,2.5rem);font-weight:400;line-height:1.2;
+    color:#c8c4ba;margin-bottom:1.5rem;
+  }
+  .game-promo-heading em{font-style:italic;color:#d5d0c6}
+  .game-promo-body{font-size:0.85rem;color:#555;line-height:2;font-family:Arial,sans-serif;max-width:460px;margin:0 auto}
+  .game-start-btn{
+    background:none;border:1px solid #333;color:#666;
+    font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.22em;
+    text-transform:uppercase;padding:0.9rem 2.5rem;cursor:pointer;
+    transition:all 0.5s;margin-top:2.5rem;display:inline-block;
+  }
+  .game-start-btn:hover{color:#ccc;border-color:#555;box-shadow:0 0 25px rgba(100,95,85,0.12)}
+
+  /* ── RESOURCES ──────────────────────────────────────────────────────────────── */
+  .resources-intro{
+    font-size:0.88rem;color:#555;line-height:2;font-family:Arial,sans-serif;
+    margin-bottom:5rem;max-width:520px;
+  }
+  .resources-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:4rem;
+  }
+  .resource-col-title{
+    font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;
+    color:#444;margin-bottom:2.5rem;font-weight:400;font-family:Arial,sans-serif;
+  }
+  .resource-item{margin-bottom:2.5rem}
+  .resource-name{
+    font-size:0.8rem;color:#c8c4ba;letter-spacing:0.04em;
+    margin-bottom:0.4rem;font-family:Georgia,serif;
+  }
+  .resource-desc{
+    font-size:0.75rem;color:#444;line-height:1.9;font-family:Arial,sans-serif;
+    margin-bottom:0.5rem;
+  }
+  .resource-link{
+    font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;
+    color:#555;text-decoration:none;border-bottom:1px solid #2a2a2a;
+    padding-bottom:1px;transition:color 0.3s,border-color 0.3s;font-family:Arial,sans-serif;
+  }
+  .resource-link:hover{color:#aaa;border-color:#555}
+
+  @media(max-width:700px){
+    .resources-grid{grid-template-columns:1fr;gap:3rem}
+  }
+
   /* ── INSTAGRAM ──────────────────────────────────────────────────────────────── */
   .ig-section{text-align:center;padding:9rem 3rem}
   .ig-heading{
@@ -181,6 +229,229 @@
     .stat{border:none;border-bottom:1px solid #15181e}
     footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem}
   }
+
+  /* ══════════════════════════════════════════════════════════════════════════════
+     GAME OVERLAY
+  ══════════════════════════════════════════════════════════════════════════════ */
+  #game-overlay{
+    position:fixed;inset:0;z-index:5000;
+    background:#000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-family:'Courier New',Courier,monospace;
+  }
+  #game-overlay.open{display:flex}
+
+  /* scanline texture */
+  #game-overlay::before{
+    content:'';
+    position:fixed;inset:0;
+    background:repeating-linear-gradient(
+      to bottom,
+      transparent,transparent 3px,
+      rgba(0,0,0,0.18) 3px,rgba(0,0,0,0.18) 4px
+    );
+    pointer-events:none;
+    z-index:1;
+  }
+
+  #game-container{
+    width:min(620px,100vw);
+    height:min(520px,100vh);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    z-index:2;
+    cursor:pointer;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* ── Battle area (top) ──────────────────────────────────────────────────────── */
+  #battle-area{
+    flex:1;
+    border:3px solid #fff;
+    margin:20px 20px 0;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+
+  #enemy-wrap{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+
+  #enemy-sprite{
+    width:200px;height:200px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  #enemy-sprite img{
+    width:100%;height:100%;
+    object-fit:contain;
+    image-rendering:pixelated;
+    display:block;
+  }
+
+  #hp-bar-wrap{width:230px}
+  #hp-label{
+    display:flex;justify-content:space-between;align-items:baseline;
+    color:#fff;font-size:0.7rem;letter-spacing:0.14em;margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  #hp-label .hp-num{font-size:0.62rem;color:#ccc;letter-spacing:0.08em}
+  #hp-bar{
+    height:20px;background:#000;
+    border:3px solid #fff;
+    overflow:hidden;
+    position:relative;
+  }
+  #hp-fill{
+    height:100%;width:100%;
+    background:#52d94d;
+    transition:width 0.7s ease;
+    position:relative;
+  }
+  /* Undertale-style scanline on HP bar */
+  #hp-fill::after{
+    content:'';position:absolute;inset:0;
+    background:repeating-linear-gradient(
+      to bottom,
+      transparent,transparent 4px,
+      rgba(0,0,0,0.18) 4px,rgba(0,0,0,0.18) 5px
+    );
+  }
+
+  #narrator-center{
+    color:#666;font-size:0.72rem;letter-spacing:0.1em;text-align:center;
+    padding:1rem;line-height:2;
+  }
+
+  /* ── Dialogue box (bottom) ──────────────────────────────────────────────────── */
+  #dialogue-box{
+    border:3px solid #fff;
+    margin:8px 20px 20px;
+    background:#000;
+    padding:14px 18px 12px;
+    min-height:140px;
+    position:relative;
+    flex-shrink:0;
+  }
+
+  #dialogue-speaker{
+    font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:#ffff55;margin-bottom:8px;display:none;
+  }
+  #dialogue-speaker.show{display:block}
+
+  #dialogue-text{
+    font-size:0.78rem;color:#fff;line-height:1.8;
+    min-height:52px;white-space:pre-wrap;word-break:break-word;
+  }
+
+  #continue-hint{
+    position:absolute;bottom:10px;right:14px;
+    font-size:0.65rem;color:#666;
+    animation:blink 0.9s step-start infinite;
+    display:none;
+  }
+  @keyframes blink{50%{opacity:0}}
+
+  /* ── Choice / Action menus ─────────────────────────────────────────────────── */
+  #dialogue-choices{display:none;margin-top:10px}
+  #dialogue-choices.show{display:block}
+
+  .choice-item{
+    font-size:0.75rem;color:#fff;padding:3px 0;cursor:pointer;letter-spacing:0.05em;
+    transition:color 0.1s;
+  }
+  .choice-item:hover,.choice-item.selected{color:#ffff55}
+  .choice-item.selected::before{content:'> '}
+
+  .action-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:7px;margin-top:4px;
+  }
+
+  .action-btn{
+    border:2px solid #fff;background:#000;color:#fff;
+    font-family:'Courier New',Courier,monospace;
+    font-size:0.68rem;letter-spacing:0.12em;
+    padding:7px 10px;cursor:pointer;
+    text-align:left;text-transform:uppercase;
+    transition:background 0.1s,color 0.1s,border-color 0.1s;
+  }
+  .action-btn:hover:not(:disabled){background:#fff;color:#000}
+  .action-btn:disabled{border-color:#2a2a2a;color:#2a2a2a;cursor:not-allowed;background:#000}
+
+  /* ── Close button ──────────────────────────────────────────────────────────── */
+  #game-close{
+    position:absolute;top:14px;right:18px;
+    color:#333;background:none;border:none;
+    font-family:'Courier New',monospace;font-size:0.6rem;
+    letter-spacing:0.18em;cursor:pointer;z-index:3;
+    text-transform:uppercase;transition:color 0.3s;
+  }
+  #game-close:hover{color:#888}
+
+  /* ── Enemy animations ──────────────────────────────────────────────────────── */
+  @keyframes enemyAppear{
+    from{opacity:0;transform:translateY(16px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  @keyframes enemyHit{
+    0%,100%{transform:translateX(0);filter:none}
+    20%{transform:translateX(-7px);filter:brightness(4) invert(0)}
+    50%{transform:translateX(7px);filter:brightness(3)}
+    75%{transform:translateX(-4px);filter:brightness(2)}
+  }
+  @keyframes enemyFade{
+    from{opacity:0.8}
+    to{opacity:0.15;filter:grayscale(1)}
+  }
+  /* Soft idle float */
+  @keyframes idleFloat{
+    0%   {transform:translateY(0px)}
+    50%  {transform:translateY(-6px)}
+    100% {transform:translateY(0px)}
+  }
+
+  #enemy-sprite-img{animation:idleFloat 3s ease-in-out infinite}
+
+  .anim-appear{animation:enemyAppear 0.5s ease forwards}
+  /* Hit animation overrides idle float on the sprite img */
+  .anim-hit #enemy-sprite-img{animation:enemyHit 0.4s ease!important}
+  .anim-hit{animation:none}
+  .anim-fade{animation:enemyFade 1.2s ease forwards}
+
+  /* Impact flash overlay */
+  #hit-flash{
+    position:absolute;inset:0;
+    background:#fff;
+    opacity:0;
+    pointer-events:none;
+    z-index:10;
+  }
+  @keyframes hitFlash{
+    0%  {opacity:0.85}
+    40% {opacity:0.4}
+    100%{opacity:0}
+  }
+  #hit-flash.flash{animation:hitFlash 0.35s ease forwards}
+
+  @media(max-width:480px){
+    #battle-area{margin:10px 10px 0}
+    #dialogue-box{margin:6px 10px 10px;padding:10px 12px 10px}
+    #game-container{height:100vh}
+    .action-grid{grid-template-columns:1fr 1fr;gap:5px}
+  }
 </style>
 </head>
 <body>
@@ -199,6 +470,8 @@
   <div class="nav-links">
     <a href="#about">About</a>
     <a href="#watch">Watch</a>
+    <a href="#" id="nav-play-btn">Play</a>
+    <a href="#resources">Help</a>
     <a href="https://www.instagram.com/if_you_wereme" target="_blank">Instagram</a>
   </div>
 </nav>
@@ -237,6 +510,103 @@
   </div>
 </section>
 
+<!-- ── GAME SECTION ────────────────────────────────────────────────────────────── -->
+<section id="game-section">
+  <p class="section-label fade">Interactive</p>
+  <div class="game-promo fade">
+    <h2 class="game-promo-heading">What would <em>you</em> do?</h2>
+    <p class="game-promo-body">An interactive story. Learn what anxiety is — and discover real tools to face it.</p>
+    <button class="game-start-btn" id="game-btn">Play the game</button>
+  </div>
+</section>
+
+<!-- ── RESOURCES ──────────────────────────────────────────────────────────────── -->
+<section id="resources">
+  <p class="section-label fade">Resources</p>
+  <p class="resources-intro fade">If anxiety feels like too much — help is available. You don't have to carry it alone.</p>
+
+  <div class="resources-grid fade">
+
+    <div class="resource-col">
+      <h3 class="resource-col-title">Estonia</h3>
+
+      <div class="resource-item">
+        <div class="resource-name">Peaasi.ee</div>
+        <div class="resource-desc">Free mental health counselling &amp; info for ages 12–26. Up to 6 sessions with a trained specialist.</div>
+        <a href="https://peaasi.ee/en/" target="_blank" class="resource-link">peaasi.ee</a>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">Eluliin — 655 8088</div>
+        <div class="resource-desc">Emotional crisis support. Daily 19:00–07:00. Available in Estonian and Russian.</div>
+        <a href="https://eluliin.ee" target="_blank" class="resource-link">eluliin.ee</a>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">Helpline — 116 123</div>
+        <div class="resource-desc">Free emotional support daily 10:00–24:00. Estonian, Russian, and English.</div>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">TLU Student Counselling</div>
+        <div class="resource-desc">Free, confidential psychological counselling for Tallinn University students. Up to 5 sessions per semester.</div>
+        <a href="https://www.tlu.ee/en/psychological-counselling" target="_blank" class="resource-link">tlu.ee</a>
+      </div>
+    </div>
+
+    <div class="resource-col">
+      <h3 class="resource-col-title">Europe &amp; Beyond</h3>
+
+      <div class="resource-item">
+        <div class="resource-name">Mental Health Europe</div>
+        <div class="resource-desc">Pan-European network with a youth helplines directory for every EU country.</div>
+        <a href="https://www.mentalhealtheurope.org/" target="_blank" class="resource-link">mentalhealtheurope.org</a>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">YoungMinds</div>
+        <div class="resource-desc">Leading resource for young people's mental health. Crisis text line, self-help guides, anxiety tools.</div>
+        <a href="https://www.youngminds.org.uk/" target="_blank" class="resource-link">youngminds.org.uk</a>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">Anxiety UK</div>
+        <div class="resource-desc">Helpline, therapy access, and self-help for anxiety disorders. Phone: 03444 775 774.</div>
+        <a href="https://www.anxietyuk.org.uk/" target="_blank" class="resource-link">anxietyuk.org.uk</a>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">Find a Helpline</div>
+        <div class="resource-desc">Global directory of verified crisis helplines by country.</div>
+        <a href="https://findahelpline.com/" target="_blank" class="resource-link">findahelpline.com</a>
+      </div>
+    </div>
+
+    <div class="resource-col">
+      <h3 class="resource-col-title">Further Reading</h3>
+
+      <div class="resource-item">
+        <div class="resource-name">Social Anxiety &amp; CBT in Young People</div>
+        <div class="resource-desc">Evans et al. (2021) — Only 35% of young people with social anxiety recover through generic CBT, pointing to the need for targeted approaches.</div>
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8293629/" target="_blank" class="resource-link">Read paper →</a>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">CBT Efficacy for Youth Anxiety</div>
+        <div class="resource-desc">Pegg et al. (2022) — Comprehensive review of what works, what doesn't, and emerging neuroimaging approaches to personalise treatment.</div>
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9660212/" target="_blank" class="resource-link">Read paper →</a>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-name">Prevalence of Social Anxiety in Schools</div>
+        <div class="resource-desc">Alves et al. (2022) — ~26% of adolescents report intense social fears; most don't seek help despite being willing to.</div>
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9566153/" target="_blank" class="resource-link">Read paper →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <div class="ig-section">
   <p class="section-label fade">Follow</p>
   <h2 class="ig-heading fade glow-text">See behind<br>the <em>story</em></h2>
@@ -247,6 +617,45 @@
   <span class="footer-l">2026 If You Were Me / Group 2, Tallinn University</span>
   <span class="footer-r">Supervisor: Mar Canet Sola</span>
 </footer>
+
+<!-- ══════════════════════════════════════════════════════════════════════════════
+     GAME OVERLAY
+══════════════════════════════════════════════════════════════════════════════ -->
+<div id="game-overlay">
+  <button id="game-close">X  Close</button>
+  <div id="game-container">
+
+    <!-- Battle area -->
+    <div id="battle-area">
+      <!-- Enemy (hidden until enemy_intro) -->
+      <div id="enemy-wrap">
+        <div id="enemy-sprite">
+          <img id="enemy-sprite-img" src="Sprite/idle.png" alt="ANXIETY">
+        </div>
+        <div id="hp-bar-wrap">
+          <div id="hp-label">
+            <span>ANXIETY</span>
+            <span class="hp-num">HP <span id="hp-value">100</span></span>
+          </div>
+          <div id="hp-bar"><div id="hp-fill"></div></div>
+        </div>
+      </div>
+      <!-- Shown when enemy is hidden -->
+      <div id="narrator-center"></div>
+      <!-- Impact flash -->
+      <div id="hit-flash"></div>
+    </div>
+
+    <!-- Dialogue box -->
+    <div id="dialogue-box">
+      <div id="dialogue-speaker"></div>
+      <div id="dialogue-text"></div>
+      <div id="continue-hint">v</div>
+      <div id="dialogue-choices"></div>
+    </div>
+
+  </div>
+</div>
 
 <script>
 // ── LOADING SCREEN ────────────────────────────────────────────────────────────
@@ -285,10 +694,8 @@
 // ── HERO TITLE — per-letter flicker on mouse proximity ───────────────────────
 (function(){
   const h1 = document.getElementById('hero-title');
-  const text = h1.textContent;
   h1.textContent = '';
 
-  // Wrap each character in a span, preserve <em> for "me"
   const html = 'If you were <em>me</em>';
   const temp = document.createElement('div');
   temp.innerHTML = html;
@@ -296,7 +703,6 @@
   function wrapLetters(node, container){
     node.childNodes.forEach(child => {
       if(child.nodeType === 3){
-        // text node — wrap each char, preserve spaces
         for(const ch of child.textContent){
           const span = document.createElement('span');
           span.className = 'hero-letter';
@@ -304,7 +710,6 @@
           container.appendChild(span);
         }
       } else if(child.nodeType === 1){
-        // element node — clone and recurse
         const clone = document.createElement(child.tagName.toLowerCase());
         for(const attr of child.attributes) clone.setAttribute(attr.name, attr.value);
         wrapLetters(child, clone);
@@ -318,13 +723,11 @@
 
   document.addEventListener('mousemove', e => {
     const rect = h1.getBoundingClientRect();
-    // check if mouse is near the title area
     const pad = 80;
     const inZone = e.clientX > rect.left - pad && e.clientX < rect.right + pad
                 && e.clientY > rect.top - pad && e.clientY < rect.bottom + pad;
     if(!inZone) return;
 
-    // randomly flicker 1-2 nearby letters
     letters.forEach(letter => {
       const lr = letter.getBoundingClientRect();
       const lcx = lr.left + lr.width/2;
@@ -366,7 +769,6 @@ function noise(x, y, t){
         + Math.cos(x * 0.012 + y * 0.005 - t * 0.9)) / 3;
 }
 
-// Thick fog
 const PARTICLES = 120;
 const particles = Array.from({length: PARTICLES}, () => ({
   x: Math.random() * 2000,
@@ -468,6 +870,557 @@ const obs = new IntersectionObserver(e => e.forEach(x => {
   if(x.isIntersecting) x.target.classList.add('in');
 }), {threshold: 0.12});
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GAME
+// ══════════════════════════════════════════════════════════════════════════════
+(function(){
+
+  // ── DOM refs ────────────────────────────────────────────────────────────────
+  const overlay       = document.getElementById('game-overlay');
+  const container     = document.getElementById('game-container');
+  const battleArea    = document.getElementById('battle-area');
+  const enemyWrap     = document.getElementById('enemy-wrap');
+  const enemySprite   = document.getElementById('enemy-sprite');
+  const enemyImg      = document.getElementById('enemy-sprite-img');
+  const narratorCenter= document.getElementById('narrator-center');
+  const hpFill        = document.getElementById('hp-fill');
+  const hpValue       = document.getElementById('hp-value');
+  const dlgSpeaker    = document.getElementById('dialogue-speaker');
+  const dlgText       = document.getElementById('dialogue-text');
+  const dlgChoices    = document.getElementById('dialogue-choices');
+  const continueHint  = document.getElementById('continue-hint');
+
+  // ── Sounds ───────────────────────────────────────────────────────────────────
+  // Pool of clones for rapid text blips (avoids choppy playback)
+  const TEXT_POOL_SIZE = 6;
+  const textPool = Array.from({length: TEXT_POOL_SIZE}, () => {
+    const a = new Audio('text.mp3');
+    a.volume = 0.18;
+    return a;
+  });
+  let textPoolIdx = 0;
+
+  const acceptSnd = new Audio('accept.mp3');
+  acceptSnd.volume = 0.5;
+
+  const damageSnd = new Audio('damage.mp3');
+  damageSnd.volume = 0.7;
+
+  function playDamage() {
+    try {
+      damageSnd.currentTime = 0;
+      damageSnd.play().catch(() => {});
+    } catch(e) {}
+  }
+
+  function playTextBlip() {
+    try {
+      const a = textPool[textPoolIdx % TEXT_POOL_SIZE];
+      textPoolIdx++;
+      a.currentTime = 0;
+      a.play().catch(() => {});
+    } catch(e) {}
+  }
+
+  function playAccept() {
+    try {
+      acceptSnd.currentTime = 0;
+      acceptSnd.play().catch(() => {});
+    } catch(e) {}
+  }
+
+  // ── State ───────────────────────────────────────────────────────────────────
+  let sceneId       = null;
+  let lineIdx       = 0;
+  let isTyping      = false;
+  let typeTimer     = null;
+  let waitInput     = false;
+  let hp            = 100;
+  let usedMoves     = new Set();
+
+  // ── Scene data ──────────────────────────────────────────────────────────────
+  const SCENES = {
+
+    intro: {
+      speaker: null,
+      lines: [
+        '* ...',
+        '* Do you ever feel overwhelmed?',
+        '* Like your heart is racing... your thoughts won\'t stop...',
+        '* ...and you just can\'t breathe?',
+      ],
+      choices: [
+        { text: 'Yes. I know that feeling.',  next: 'intro_yes' },
+        { text: 'Not really.',                next: 'intro_no'  },
+      ]
+    },
+
+    intro_yes: {
+      speaker: null,
+      lines: [
+        '* Yeah.',
+        '* That feeling has a name.',
+      ],
+      next: 'learn'
+    },
+
+    intro_no: {
+      speaker: null,
+      lines: [
+        '* Lucky you.',
+        '* But maybe someone around you does.',
+        '* Let\'s talk about it anyway.',
+      ],
+      next: 'learn'
+    },
+
+    learn: {
+      speaker: null,
+      lines: [
+        '* Anxiety is your body\'s alarm system.',
+        '* It evolved to protect you from danger.',
+        '* But sometimes... it misfires.',
+        '* It sees a crowded hallway — and screams DANGER.',
+        '* It reads a message — and screams DANGER.',
+        '* It makes you feel like everyone is watching.',
+        '* About 1 in 3 young people experience this.',
+        '* You are not broken.',
+        '* You are not alone.',
+        '* But there is someone you should meet.',
+      ],
+      next: 'enemy_intro'
+    },
+
+    enemy_intro: {
+      speaker: null,
+      lines: [
+        '* Something stirs in the shadows...',
+        '* ...',
+        '* ...',
+      ],
+      next: 'enemy_speaks',
+      onStart: revealEnemy
+    },
+
+    enemy_speaks: {
+      speaker: 'ANXIETY',
+      lines: [
+        '* Finally. You found me.',
+        '* I\'ve been here the whole time.',
+        '* The racing heart before you speak in class? That was me.',
+        '* The voice that said they were all laughing? Me.',
+        '* You can\'t get rid of me.',
+      ],
+      next: 'battle_start'
+    },
+
+    battle_start: {
+      speaker: null,
+      lines: [
+        '* A chill runs through you.',
+        '* But you\'ve been here before.',
+        '* And you know some things.',
+        '* You face ANXIETY!',
+      ],
+      next: 'battle'
+    },
+
+    battle: { isBattle: true },
+
+    // ── Techniques ────────────────────────────────────────────────────────────
+
+    breathe_scene: {
+      speaker: null,
+      lines: [
+        '* You pause.',
+        '* You breathe.',
+        '* In for 4...  hold for 4...  out for 4...  hold for 4.',
+        '* Box breathing.',
+        '* It tells your nervous system: you are safe.',
+      ],
+      next: 'breathe_response',
+      onEnd: () => dealDamage('breathe')
+    },
+    breathe_response: {
+      speaker: 'ANXIETY',
+      lines: ['* W-wait... what? That\'s not fair.'],
+      next: 'battle'
+    },
+
+    ground_scene: {
+      speaker: null,
+      lines: [
+        '* You look around.',
+        '* 5 things you can see.',
+        '* 4 you can touch.  3 you can hear.',
+        '* 2 you can smell.  1 you can taste.',
+        '* The 5-4-3-2-1 method.',
+        '* It pulls you out of your head and into the present.',
+      ],
+      next: 'ground_response',
+      onEnd: () => dealDamage('ground')
+    },
+    ground_response: {
+      speaker: 'ANXIETY',
+      lines: ['* Stop paying attention to real things!'],
+      next: 'battle'
+    },
+
+    move_scene: {
+      speaker: null,
+      lines: [
+        '* You shake it out. You walk.',
+        '* Movement burns off stress hormones.',
+        '* Cortisol. Adrenaline. Gone.',
+        '* Even 10 minutes of walking measurably reduces anxiety.',
+      ],
+      next: 'move_response',
+      onEnd: () => dealDamage('move')
+    },
+    move_response: {
+      speaker: 'ANXIETY',
+      lines: ['* Don\'t you dare feel better...'],
+      next: 'battle'
+    },
+
+    think_scene: {
+      speaker: null,
+      lines: [
+        '* You catch the thought.',
+        '* You check it.',
+        '* You change it.',
+        '* "Everyone is judging me."',
+        '* > "Most people are focused on themselves."',
+        '* Cognitive reframing.',
+        '* A skill used in therapy. You can use it anywhere.',
+      ],
+      next: 'think_response',
+      onEnd: () => dealDamage('think')
+    },
+    think_response: {
+      speaker: 'ANXIETY',
+      lines: ['* That\'s not... I was just trying to help you...'],
+      next: 'battle'
+    },
+
+    // ── Victory ───────────────────────────────────────────────────────────────
+
+    victory: {
+      speaker: 'ANXIETY',
+      lines: [
+        '* I... I\'m still here, you know.',
+        '* I\'ll always be here.',
+        '* But...',
+        '* ...maybe that doesn\'t have to mean what you think it does.',
+      ],
+      next: 'ending',
+      onEnd: fadeEnemy
+    },
+
+    ending: {
+      speaker: null,
+      lines: [
+        '* Anxiety doesn\'t disappear.',
+        '* But it can be managed.',
+        '* Breathing. Grounding. Moving. Thinking.',
+        '* These tools are real. They work.',
+        '* If it ever feels like too much — talk to someone.',
+        '* You don\'t have to carry this alone.',
+        '* ...',
+        '* Thank you for playing.',
+      ],
+      next: 'fadeclose'
+    }
+  };
+
+  // ── Scene helpers ────────────────────────────────────────────────────────────
+
+  function revealEnemy() {
+    narratorCenter.textContent = '';
+    enemyImg.src = 'Sprite/idle.png';
+    enemyWrap.style.display = 'flex';
+    enemyWrap.classList.remove('anim-appear','anim-hit','anim-fade');
+    void enemyWrap.offsetWidth;
+    enemyWrap.classList.add('anim-appear');
+  }
+
+  function fadeEnemy() {
+    enemyImg.src = 'Sprite/defeated.png';
+    enemySprite.classList.remove('anim-hit');
+    void enemySprite.offsetWidth;
+    enemySprite.classList.add('anim-fade');
+  }
+
+  function dealDamage(move) {
+    hp = Math.max(0, hp - 25);
+    hpFill.style.width = hp + '%';
+    hpValue.textContent = hp;
+    usedMoves.add(move);
+
+    playDamage();
+
+    // White impact flash on battle area
+    const flash = document.getElementById('hit-flash');
+    flash.classList.remove('flash');
+    void flash.offsetWidth;
+    flash.classList.add('flash');
+    flash.addEventListener('animationend', () => flash.classList.remove('flash'), { once: true });
+
+    // Sprite hit swap
+    enemyImg.src = 'Sprite/hit.png';
+    enemySprite.classList.remove('anim-hit');
+    void enemySprite.offsetWidth;
+    enemySprite.classList.add('anim-hit');
+    enemySprite.addEventListener('animationend', () => {
+      enemySprite.classList.remove('anim-hit');
+      if (hp > 0) enemyImg.src = 'Sprite/idle.png';
+    }, { once: true });
+  }
+
+  // ── Core engine ──────────────────────────────────────────────────────────────
+
+  function goTo(id) {
+    // If returning to battle after HP hits 0, go to victory instead
+    if (id === 'battle' && hp <= 0) { id = 'victory'; }
+
+    sceneId = id;
+    lineIdx = 0;
+    waitInput = false;
+    continueHint.style.display = 'none';
+    dlgChoices.innerHTML = '';
+    dlgChoices.classList.remove('show');
+
+    const scene = SCENES[id];
+    if (!scene) return;
+
+    if (scene.isBattle) { showBattle(); return; }
+
+    if (scene.onStart) scene.onStart();
+
+    if (scene.speaker) {
+      dlgSpeaker.textContent = scene.speaker;
+      dlgSpeaker.classList.add('show');
+    } else {
+      dlgSpeaker.textContent = '';
+      dlgSpeaker.classList.remove('show');
+    }
+
+    showLine(0);
+  }
+
+  function showLine(idx) {
+    const scene = SCENES[sceneId];
+    if (!scene || scene.isBattle) return;
+
+    lineIdx = idx;
+    waitInput = false;
+    continueHint.style.display = 'none';
+
+    const isLast = (idx === scene.lines.length - 1);
+
+    typeText(scene.lines[idx], () => {
+      if (isLast && scene.choices) {
+        // Choices appear automatically after the last line — no extra click needed
+        if (scene.onEnd) scene.onEnd();
+        buildChoices(scene.choices);
+      } else if (isLast && scene.next === 'fadeclose') {
+        // Auto-fade back to page after a short pause
+        waitInput = false;
+        continueHint.style.display = 'none';
+        setTimeout(fadeCloseGame, 1800);
+      } else {
+        waitInput = true;
+        continueHint.style.display = 'block';
+      }
+    });
+  }
+
+  function typeText(text, onDone) {
+    if (typeTimer) clearInterval(typeTimer);
+    dlgText.textContent = '';
+    isTyping = true;
+    let i = 0;
+    typeTimer = setInterval(() => {
+      if (i < text.length) {
+        const ch = text[i];
+        dlgText.textContent += ch;
+        // Play blip on visible characters (skip spaces and punctuation pauses)
+        if (ch !== ' ' && ch !== '.' && ch !== ',' && ch !== '\n') {
+          playTextBlip();
+        }
+        i++;
+      } else {
+        clearInterval(typeTimer);
+        typeTimer = null;
+        isTyping = false;
+        if (onDone) onDone();
+      }
+    }, 28);
+  }
+
+  function advance() {
+    if (isTyping) {
+      // Skip typewriter — complete the current line immediately
+      if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+      const scene = SCENES[sceneId];
+      if (scene && !scene.isBattle) {
+        dlgText.textContent = scene.lines[lineIdx];
+        const isLast = (lineIdx === scene.lines.length - 1);
+        if (isLast && scene.choices) {
+          isTyping = false;
+          if (scene.onEnd) scene.onEnd();
+          buildChoices(scene.choices);
+        } else {
+          isTyping = false;
+          waitInput = true;
+          continueHint.style.display = 'block';
+        }
+      }
+      return;
+    }
+
+    if (!waitInput) return;
+
+    const scene = SCENES[sceneId];
+    if (!scene || scene.isBattle) return;
+
+    playAccept();
+
+    if (lineIdx < scene.lines.length - 1) {
+      showLine(lineIdx + 1);
+    } else {
+      // Last line, non-choice scene — go to next
+      if (scene.onEnd) scene.onEnd();
+      const nxt = scene.next;
+      waitInput = false;
+      continueHint.style.display = 'none';
+      if (nxt === 'close') {
+        closeGame();
+      } else if (nxt) {
+        goTo(nxt);
+      }
+    }
+  }
+
+  function buildChoices(choices) {
+    continueHint.style.display = 'none';
+    waitInput = false;
+    dlgChoices.innerHTML = '';
+
+    choices.forEach((c, i) => {
+      const div = document.createElement('div');
+      div.className = 'choice-item' + (i === 0 ? ' selected' : '');
+      div.textContent = c.text;
+      div.addEventListener('click', () => { playAccept(); goTo(c.next); });
+      dlgChoices.appendChild(div);
+    });
+
+    dlgChoices.classList.add('show');
+  }
+
+  function showBattle() {
+    dlgSpeaker.classList.remove('show');
+    dlgText.textContent = '* What will you do?';
+    continueHint.style.display = 'none';
+    waitInput = false;
+
+    dlgChoices.innerHTML = '';
+
+    const actions = [
+      { id: 'breathe', label: 'BREATHE', scene: 'breathe_scene' },
+      { id: 'ground',  label: 'GROUND',  scene: 'ground_scene'  },
+      { id: 'move',    label: 'MOVE',    scene: 'move_scene'    },
+      { id: 'think',   label: 'THINK',   scene: 'think_scene'   },
+    ];
+
+    const grid = document.createElement('div');
+    grid.className = 'action-grid';
+
+    actions.forEach(a => {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.textContent = a.label;
+      if (usedMoves.has(a.id)) {
+        btn.disabled = true;
+      } else {
+        btn.addEventListener('click', () => { playAccept(); goTo(a.scene); });
+      }
+      grid.appendChild(btn);
+    });
+
+    dlgChoices.appendChild(grid);
+    dlgChoices.classList.add('show');
+  }
+
+  // ── Open / Close ─────────────────────────────────────────────────────────────
+
+  function openGame() {
+    hp = 100;
+    usedMoves = new Set();
+    hpFill.style.width = '100%';
+    hpValue.textContent = '100';
+    enemyWrap.style.display = 'none';
+    enemyWrap.classList.remove('anim-appear','anim-hit','anim-fade');
+    enemySprite.classList.remove('anim-appear','anim-hit','anim-fade');
+    enemyImg.src = 'Sprite/idle.png';
+    narratorCenter.textContent = '';
+    dlgText.textContent = '';
+    dlgSpeaker.textContent = '';
+    dlgChoices.innerHTML = '';
+    dlgChoices.classList.remove('show');
+    continueHint.style.display = 'none';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    goTo('intro');
+  }
+
+  function closeGame() {
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+    overlay.style.transition = '';
+    overlay.style.opacity = '';
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function fadeCloseGame() {
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+    overlay.style.transition = 'opacity 2.5s ease';
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+      overlay.classList.remove('open');
+      overlay.style.opacity = '';
+      overlay.style.transition = '';
+      document.body.style.overflow = '';
+    }, 2500);
+  }
+
+  // ── Event listeners ──────────────────────────────────────────────────────────
+
+  document.getElementById('game-btn').addEventListener('click', openGame);
+  document.getElementById('nav-play-btn').addEventListener('click', e => {
+    e.preventDefault(); openGame();
+  });
+  document.getElementById('game-close').addEventListener('click', closeGame);
+
+  // Click anywhere on game (except choices/close) to advance
+  container.addEventListener('click', e => {
+    if (e.target.closest('#dialogue-choices')) return;
+    if (e.target.closest('#game-close')) return;
+    advance();
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === 'Escape') { closeGame(); return; }
+    if (e.key === ' ' || e.key === 'Enter' || e.key === 'z' || e.key === 'Z') {
+      e.preventDefault();
+      advance();
+    }
+  });
+
+})();
 </script>
 </body>
 </html>
