@@ -578,7 +578,7 @@
   <p class="section-label fade">Interactive</p>
   <div class="game-promo fade">
     <h2 class="game-promo-heading">What would <em>you</em> do?</h2>
-    <p class="game-promo-body">An interactive story. Learn what anxiety is — and discover real tools to face it.</p>
+    <p class="game-promo-body">An interactive story. Learn what anxiety is and discover real tools to face it.</p>
     <button class="game-start-btn" id="game-btn">Play the game</button>
   </div>
 </section>
@@ -586,7 +586,7 @@
 <!-- ── RESOURCES ──────────────────────────────────────────────────────────────── -->
 <section id="resources">
   <p class="section-label fade">Resources</p>
-  <p class="resources-intro fade">If anxiety feels like too much — help is available. You don't have to carry it alone.</p>
+  <p class="resources-intro fade">If anxiety feels like too much, help is available. You don't have to carry it alone.</p>
 
   <div class="resources-grid fade">
 
@@ -999,6 +999,19 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
       acceptSnd.currentTime = 0;
       acceptSnd.play().catch(() => {});
     } catch(e) {}
+  }
+
+  // Unlock audio on mobile — browsers require a user gesture before any sound plays.
+  // Call this inside openGame() which is always triggered by a tap/click.
+  let audioUnlocked = false;
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    const all = [...textPool, acceptSnd, damageSnd];
+    all.forEach(a => {
+      const p = a.play();
+      if (p) p.then(() => { a.pause(); a.currentTime = 0; }).catch(() => {});
+    });
   }
 
   // ── State ───────────────────────────────────────────────────────────────────
@@ -1428,6 +1441,7 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
   // ── Open / Close ─────────────────────────────────────────────────────────────
 
   function openGame() {
+    unlockAudio();
     hp = 100;
     usedMoves = new Set();
     hpFill.style.width = '100%';
