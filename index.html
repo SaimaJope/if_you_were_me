@@ -361,6 +361,17 @@
     transition:width 0.7s ease;
     position:relative;
   }
+  #hp-fill.hp-danger{ background:#f5a623; }
+  @keyframes hpFlashRed{
+    0%,35%{background:#e03030}
+    100%  {background:#52d94d}
+  }
+  @keyframes hpFlashRedDanger{
+    0%,35%{background:#e03030}
+    100%  {background:#f5a623}
+  }
+  #hp-fill.hp-hit{ animation:hpFlashRed 0.55s ease forwards }
+  #hp-fill.hp-danger.hp-hit{ animation:hpFlashRedDanger 0.55s ease forwards }
   /* Undertale-style scanline on HP bar */
   #hp-fill::after{
     content:'';position:absolute;inset:0;
@@ -1247,6 +1258,13 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     hpValue.textContent = hp;
     usedMoves.add(move);
 
+    // HP bar colour: orange at 25 (one hit from dead), red blink on every hit
+    if (hp <= 25 && hp > 0) hpFill.classList.add('hp-danger');
+    hpFill.classList.remove('hp-hit');
+    void hpFill.offsetWidth;
+    hpFill.classList.add('hp-hit');
+    hpFill.addEventListener('animationend', () => hpFill.classList.remove('hp-hit'), { once: true });
+
     playDamage();
 
     // White impact flash on battle area
@@ -1449,6 +1467,7 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     hp = 100;
     usedMoves = new Set();
     hpFill.style.width = '100%';
+    hpFill.classList.remove('hp-danger', 'hp-hit');
     hpValue.textContent = '100';
     enemyWrap.style.display = 'none';
     enemyWrap.classList.remove('anim-appear','anim-hit','anim-fade');
