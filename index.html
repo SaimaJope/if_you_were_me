@@ -280,6 +280,7 @@
     align-items:center;
     justify-content:center;
     font-family:'Courier New',Courier,monospace;
+    -webkit-tap-highlight-color:transparent;
   }
   #game-overlay.open{display:flex}
 
@@ -306,6 +307,7 @@
     cursor:pointer;
     user-select:none;
     -webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;
   }
 
   /* ── Battle area (top) ──────────────────────────────────────────────────────── */
@@ -427,6 +429,7 @@
     padding:7px 10px;cursor:pointer;
     text-align:left;text-transform:uppercase;
     transition:background 0.1s,color 0.1s,border-color 0.1s;
+    -webkit-tap-highlight-color:transparent;
   }
   .action-btn:hover:not(:disabled){background:#fff;color:#000}
   .action-btn:disabled{border-color:#2a2a2a;color:#2a2a2a;cursor:not-allowed;background:#000}
@@ -434,12 +437,13 @@
   /* ── Close button ──────────────────────────────────────────────────────────── */
   #game-close{
     position:absolute;top:14px;right:18px;
-    color:#333;background:none;border:none;
-    font-family:'Courier New',monospace;font-size:0.6rem;
+    color:#888;background:none;border:1px solid #333;
+    font-family:'Courier New',monospace;font-size:0.65rem;
     letter-spacing:0.18em;cursor:pointer;z-index:3;
-    text-transform:uppercase;transition:color 0.3s;
+    text-transform:uppercase;transition:color 0.3s,border-color 0.3s;
+    padding:4px 10px;-webkit-tap-highlight-color:transparent;
   }
-  #game-close:hover{color:#888}
+  #game-close:hover{color:#fff;border-color:#888}
 
   /* ── Enemy animations ──────────────────────────────────────────────────────── */
   @keyframes enemyAppear{
