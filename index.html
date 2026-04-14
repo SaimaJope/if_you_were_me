@@ -41,10 +41,21 @@
     position:fixed;top:0;left:0;right:0;z-index:100;
     padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;
   }
-  .nav-title{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:#666}
+  .nav-title{font-size:0.75rem;letter-spacing:0.22em;text-transform:uppercase;color:#888}
   .nav-links{display:flex;gap:2.5rem}
-  .nav-links a{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;text-decoration:none;transition:color 0.4s,text-shadow 0.4s}
-  .nav-links a:hover{color:#ddd;text-shadow:0 0 16px rgba(220,215,200,0.4)}
+  .nav-links a{font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:#999;text-decoration:none;transition:color 0.4s,text-shadow 0.4s}
+  .nav-links a:hover{color:#c8a96e;text-shadow:0 0 18px rgba(200,169,110,0.45)}
+
+  /* hamburger — hidden on desktop */
+  .nav-burger{
+    display:none;flex-direction:column;justify-content:center;gap:5px;
+    background:none;border:none;cursor:pointer;padding:6px;z-index:101;
+  }
+  .nav-burger span{display:block;width:22px;height:1px;background:#999;transition:background 0.3s,transform 0.3s,opacity 0.3s}
+  .nav-burger:hover span{background:#c8a96e}
+  .nav-burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  .nav-burger.open span:nth-child(2){opacity:0}
+  .nav-burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 
   /* ── GLOW FLICKER ──────────────────────────────────────────────────────────── */
   @keyframes glowFlicker{
@@ -107,12 +118,12 @@
 
   /* ── HERO ───────────────────────────────────────────────────────────────────── */
   .hero{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
-  .hero-eyebrow{font-size:0.62rem;letter-spacing:0.32em;text-transform:uppercase;color:#444;margin-bottom:5rem}
-  .hero-sub{font-size:0.85rem;color:#555;letter-spacing:0.08em;line-height:2.2;font-family:Arial,sans-serif}
+  .hero-eyebrow{font-size:0.68rem;letter-spacing:0.32em;text-transform:uppercase;color:#555;margin-bottom:5rem}
+  .hero-sub{font-size:0.95rem;color:#666;letter-spacing:0.08em;line-height:2.2;font-family:Arial,sans-serif}
 
   /* ── SECTIONS ───────────────────────────────────────────────────────────────── */
   section{padding:8rem 3rem;max-width:980px;margin:0 auto}
-  .section-label{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:#444;margin-bottom:2.5rem}
+  .section-label{font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:#666;margin-bottom:2.5rem}
 
   .video-wrap{
     width:100%;aspect-ratio:16/9;background:#060809;
@@ -137,7 +148,7 @@
     font-size:clamp(2rem,4vw,3.2rem);font-weight:400;
     color:#c8c4ba;letter-spacing:-0.03em;margin-bottom:0.6rem;
   }
-  .stat-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#444;line-height:1.8}
+  .stat-label{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:#666;line-height:1.8}
 
   /* ── ABOUT ──────────────────────────────────────────────────────────────────── */
   .about-grid{display:grid;grid-template-columns:1fr 2fr;gap:7rem;align-items:start}
@@ -146,7 +157,7 @@
     margin-bottom:2.5rem;color:#c8c4ba;
   }
   .about-heading em{font-style:italic;color:#d5d0c6}
-  .about-body{font-size:0.88rem;color:#555;line-height:2.1;font-family:Arial,sans-serif}
+  .about-body{font-size:0.92rem;color:#666;line-height:2.1;font-family:Arial,sans-serif}
   .about-body p+p{margin-top:1.5rem}
 
   /* ── GAME SECTION ───────────────────────────────────────────────────────────── */
@@ -156,14 +167,14 @@
     color:#c8c4ba;margin-bottom:1.5rem;
   }
   .game-promo-heading em{font-style:italic;color:#d5d0c6}
-  .game-promo-body{font-size:0.85rem;color:#555;line-height:2;font-family:Arial,sans-serif;max-width:460px;margin:0 auto}
+  .game-promo-body{font-size:0.92rem;color:#666;line-height:2;font-family:Arial,sans-serif;max-width:460px;margin:0 auto}
   .game-start-btn{
-    background:none;border:1px solid #333;color:#666;
-    font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.22em;
+    background:none;border:1px solid #444;color:#888;
+    font-family:Arial,sans-serif;font-size:0.72rem;letter-spacing:0.22em;
     text-transform:uppercase;padding:0.9rem 2.5rem;cursor:pointer;
     transition:all 0.5s;margin-top:2.5rem;display:inline-block;
   }
-  .game-start-btn:hover{color:#ccc;border-color:#555;box-shadow:0 0 25px rgba(100,95,85,0.12)}
+  .game-start-btn:hover{color:#c8a96e;border-color:#c8a96e;box-shadow:0 0 28px rgba(200,169,110,0.18)}
 
   /* ── RESOURCES ──────────────────────────────────────────────────────────────── */
   .resources-intro{
@@ -205,16 +216,16 @@
   }
   .ig-heading em{font-style:italic;color:#d5d0c6}
   .ig-btn{
-    display:inline-block;padding:0.9rem 2.5rem;border:1px solid #222;
-    font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;
-    color:#555;text-decoration:none;transition:all 0.5s;font-family:Arial,sans-serif;
+    display:inline-block;padding:0.9rem 2.5rem;border:1px solid #333;
+    font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;
+    color:#888;text-decoration:none;transition:all 0.5s;font-family:Arial,sans-serif;
   }
-  .ig-btn:hover{color:#ccc;border-color:#444;box-shadow:0 0 25px rgba(100,95,85,0.12)}
+  .ig-btn:hover{color:#c8a96e;border-color:#c8a96e;box-shadow:0 0 28px rgba(200,169,110,0.18)}
 
   /* ── FOOTER ─────────────────────────────────────────────────────────────────── */
   footer{border-top:1px solid #15181e;padding:2.5rem 3rem;display:flex;justify-content:space-between;align-items:center}
-  .footer-l{font-size:0.62rem;letter-spacing:0.1em;color:#2e2e34}
-  .footer-r{font-size:0.62rem;letter-spacing:0.08em;color:#28282e;font-family:Arial,sans-serif}
+  .footer-l{font-size:0.68rem;letter-spacing:0.1em;color:#555}
+  .footer-r{font-size:0.68rem;letter-spacing:0.08em;color:#555;font-family:Arial,sans-serif}
 
   /* ── FADE ANIMATION ─────────────────────────────────────────────────────────── */
   .fade{opacity:0;transform:translateY(18px);transition:opacity 1.1s ease,transform 1.1s ease}
@@ -222,11 +233,40 @@
 
   /* ── RESPONSIVE ─────────────────────────────────────────────────────────────── */
   @media(max-width:700px){
-    nav{padding:1.5rem}
-    section,.ig-section{padding-left:1.5rem;padding-right:1.5rem}
+    /* Nav — hamburger layout */
+    nav{
+      padding:1.2rem 1.5rem;
+      flex-wrap:wrap;
+      background:rgba(8,10,12,0.96);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+    }
+    .nav-burger{display:flex}
+    .nav-links{
+      display:none;
+      flex-direction:column;
+      width:100%;
+      gap:0;
+      padding:0.5rem 0 1rem;
+    }
+    .nav-links.open{display:flex}
+    .nav-links a{
+      padding:0.75rem 0;
+      font-size:0.85rem;
+      border-bottom:1px solid #111;
+    }
+    .nav-links a:last-child{border-bottom:none}
+
+    /* Sections */
+    section{padding:5rem 1.5rem}
+    .ig-section{padding:5rem 1.5rem}
+
+    /* Grids */
     .about-grid{grid-template-columns:1fr;gap:2.5rem}
     .stats{grid-template-columns:1fr;border:none;border-top:1px solid #15181e}
     .stat{border:none;border-bottom:1px solid #15181e}
+
+    /* Footer */
     footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem}
   }
 
@@ -448,9 +488,29 @@
 
   @media(max-width:480px){
     #battle-area{margin:10px 10px 0}
-    #dialogue-box{margin:6px 10px 10px;padding:10px 12px 10px}
-    #game-container{height:100vh}
+    #dialogue-box{margin:6px 10px 10px;padding:10px 12px 10px;min-height:120px}
+    #game-container{height:100vh;height:100dvh}
+    #game-overlay{align-items:flex-start}
     .action-grid{grid-template-columns:1fr 1fr;gap:5px}
+    .action-btn{padding:12px 8px;font-size:0.72rem}
+    #game-close{font-size:0.65rem;top:10px;right:12px}
+  }
+
+  /* ── Press to Start ─────────────────────────────────────────────────────────── */
+  #press-start{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:#000;z-index:20;gap:2rem;
+  }
+  #press-start-title{
+    font-family:'Courier New',Courier,monospace;
+    font-size:clamp(1.1rem,3vw,1.6rem);
+    letter-spacing:0.12em;color:#c8c4ba;text-align:center;line-height:1.5;
+  }
+  #press-start-hint{
+    font-family:'Courier New',Courier,monospace;
+    font-size:0.78rem;letter-spacing:0.26em;text-transform:uppercase;
+    color:#fff;animation:blink 0.9s step-start infinite;
   }
 </style>
 </head>
@@ -467,7 +527,10 @@
 
 <nav>
   <span class="nav-title">If You Were Me</span>
-  <div class="nav-links">
+  <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
     <a href="#about">About</a>
     <a href="#watch">Watch</a>
     <a href="#" id="nav-play-btn">Play</a>
@@ -623,6 +686,13 @@
 ══════════════════════════════════════════════════════════════════════════════ -->
 <div id="game-overlay">
   <button id="game-close">X  Close</button>
+
+  <!-- Press to Start screen -->
+  <div id="press-start" style="display:none">
+    <div id="press-start-title">If You Were Me<br><em>Anxiety Disorder</em></div>
+    <div id="press-start-hint">Press to Start</div>
+  </div>
+
   <div id="game-container">
 
     <!-- Battle area -->
@@ -878,6 +948,7 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
 
   // ── DOM refs ────────────────────────────────────────────────────────────────
   const overlay       = document.getElementById('game-overlay');
+  const pressStart    = document.getElementById('press-start');
   const container     = document.getElementById('game-container');
   const battleArea    = document.getElementById('battle-area');
   const enemyWrap     = document.getElementById('enemy-wrap');
@@ -931,6 +1002,7 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
   }
 
   // ── State ───────────────────────────────────────────────────────────────────
+  let pressStartActive = false;
   let sceneId       = null;
   let lineIdx       = 0;
   let isTyping      = false;
@@ -1372,11 +1444,22 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     continueHint.style.display = 'none';
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
+    pressStart.style.display = 'flex';
+    pressStartActive = true;
+  }
+
+  function dismissPressStart() {
+    if (!pressStartActive) return;
+    pressStartActive = false;
+    pressStart.style.display = 'none';
+    playAccept();
     goTo('intro');
   }
 
   function closeGame() {
     if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+    pressStartActive = false;
+    pressStart.style.display = 'none';
     overlay.style.transition = '';
     overlay.style.opacity = '';
     overlay.classList.remove('open');
@@ -1403,10 +1486,12 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
   });
   document.getElementById('game-close').addEventListener('click', closeGame);
 
-  // Click anywhere on game (except choices/close) to advance
-  container.addEventListener('click', e => {
-    if (e.target.closest('#dialogue-choices')) return;
+  // Click anywhere on game (except close) to advance or dismiss press-start
+  overlay.addEventListener('click', e => {
     if (e.target.closest('#game-close')) return;
+    if (pressStartActive) { dismissPressStart(); return; }
+    if (!e.target.closest('#game-container')) return;
+    if (e.target.closest('#dialogue-choices')) return;
     advance();
   });
 
@@ -1416,11 +1501,45 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     if (e.key === 'Escape') { closeGame(); return; }
     if (e.key === ' ' || e.key === 'Enter' || e.key === 'z' || e.key === 'Z') {
       e.preventDefault();
+      if (pressStartActive) { dismissPressStart(); return; }
       advance();
     }
   });
 
 })();
+
+// ── HAMBURGER NAV ─────────────────────────────────────────────────────────────
+(function(){
+  const burger = document.getElementById('nav-burger');
+  const links  = document.getElementById('nav-links');
+  if (!burger || !links) return;
+
+  burger.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open);
+  });
+
+  // Close menu when a link is tapped
+  links.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      links.classList.remove('open');
+      burger.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+
+// ── TOUCH SUPPORT FOR MIST ────────────────────────────────────────────────────
+document.addEventListener('touchmove', e => {
+  const t = e.touches[0];
+  mouse.x = t.clientX;
+  mouse.y = t.clientY + window.scrollY;
+}, {passive: true});
+document.addEventListener('touchend', () => {
+  mouse.x = -999;
+  mouse.y = -999;
+}, {passive: true});
 </script>
 </body>
 </html>
