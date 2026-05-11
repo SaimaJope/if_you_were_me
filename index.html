@@ -133,24 +133,11 @@
   .video-wrap{
     width:100%;aspect-ratio:16/9;background:#060809;
     border:1px solid #1f2228;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
-    cursor:pointer;position:relative;overflow:hidden;
+    position:relative;overflow:hidden;
   }
-  .play-ring{
-    width:60px;height:60px;border-radius:50%;border:1px solid #333;
-    display:flex;align-items:center;justify-content:center;
-    transition:border-color 0.4s,box-shadow 0.4s;position:relative;z-index:1;
+  .video-wrap iframe{
+    position:absolute;inset:0;width:100%;height:100%;border:none;
   }
-  .video-wrap:hover .play-ring{border-color:#666;box-shadow:0 0 30px rgba(150,140,120,0.2)}
-  .play-tri{width:0;height:0;border-style:solid;border-width:9px 0 9px 16px;border-color:transparent transparent transparent #666;margin-left:3px}
-  .play-label{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:#444;position:relative;z-index:1}
-
-  /* ── EVENT ANNOUNCEMENT ─────────────────────────────────────────────────────── */
-  .event-announce{text-align:center;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
-  .event-label{font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:#666}
-  .event-date{font-size:clamp(1.4rem,3.5vw,2.4rem);font-weight:400;color:#c8c4ba;letter-spacing:-0.01em;font-family:Georgia,serif}
-  .event-room{font-size:0.82rem;letter-spacing:0.12em;color:#888;font-family:Arial,sans-serif}
-  .event-cta{font-size:0.82rem;color:#666;font-family:Arial,sans-serif;margin-top:0.4rem}
 
   /* ── STATS ──────────────────────────────────────────────────────────────────── */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #15181e;border-bottom:1px solid #15181e;max-width:980px;margin:0 auto}
@@ -575,12 +562,7 @@
 <section id="watch">
   <p class="section-label fade">The film</p>
   <div class="video-wrap fade">
-    <div class="event-announce">
-      <p class="event-label">Screening &amp; Presentation</p>
-      <p class="event-date">Monday, 11 May — 13:00 to 15:00</p>
-      <p class="event-room">BFM Cinema Room · N-406 Kinosaal</p>
-      <p class="event-cta">Come and see the film. We'd love to have you there.</p>
-    </div>
+    <iframe src="https://www.youtube.com/embed/OdZmoISUm80" title="If You Were Me — Anxiety Disorder" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 </section>
 
